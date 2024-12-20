@@ -9,7 +9,7 @@ if [ -z "$CONTAINER_IDS" ]; then
 else
     # Stop all running containers
     echo "Stopping all running containers..."
-    docker stop $CONTAINER_IDS
+    docker kill $CONTAINER_IDS
 fi
 docker container prune -f
 echo "All containers have been stopped."
