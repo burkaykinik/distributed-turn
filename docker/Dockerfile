@@ -8,7 +8,8 @@ WORKDIR /app
 COPY . /app
 
 RUN apt-get update
-RUN apt-get install tcpdump net-tools iptables iproute2 vim -y
+RUN apt-get install tcpdump net-tools iptables iproute2 traceroute python3 vim -y
+# RUN pip install -r requirements.txt
 
 # Install any needed packages specified in requirements.txt
 # RUN pip install --no-cache-dir -r requirements.txt
