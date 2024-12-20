@@ -6,9 +6,6 @@ NUM_NETWORKS=$1
 # Base name for the networks
 BASE_NAME="NAT_NET"
 
-# Starting subnet base (192.168.1.0/24)
-SUBNET_BASE=1
-
 # Remove existing networks with names matching the pattern NAT_NET*
 EXISTING_NETWORKS=$(docker network ls --filter name="^${BASE_NAME}" --format "{{.Name}}")
 
@@ -29,10 +26,9 @@ fi
 for (( i=1; i<=NUM_NETWORKS; i++ ))
 do
     NETWORK_NAME="${BASE_NAME}${i}"
-    SUBNET="172.168.${SUBNET_BASE}.0/24"
+    SUBNET="172.168.$i.0/24"
     echo "Creating network $NETWORK_NAME with subnet $SUBNET"
     docker network create --subnet=$SUBNET $NETWORK_NAME
-    ((SUBNET_BASE++))
 done
 
 
