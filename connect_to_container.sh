@@ -19,7 +19,7 @@ tmux send-keys -t 2 "docker exec -it nat_container1-nat-1 bash" C-m
 
 
 tmux send-keys -t 1 "python3 python_codes/udp_server.py" C-m
-tmux send-keys -t 0 "python3 python_codes/udp_client.py 15.0.0.3 5005" C-m
+tmux send-keys -t 0 "python3 python_codes/udp_client.py 15.0.0.2 5005" C-m
 
 
 # Attach to the tmux session
