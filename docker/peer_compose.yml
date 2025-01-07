@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  peer:
+    image: distributed-turn
+    privileged: true 
+    cap_add:
+      - NET_ADMIN
+    command: tail -f /dev/null
+    networks:
+      - NAT_NET${NETWORK_ID}
+
+
+  nat:
+    image: distributed-turn
+    privileged: true 
+    cap_add:
+      - NET_ADMIN
+    command: tail -f /dev/null
+    networks:
+      - PUBLIC_NET
+      
+
+networks:
+  PUBLIC_NET:
+    external: true
+  NAT_NET1:
+    external: true
