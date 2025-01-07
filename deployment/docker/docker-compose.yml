@@ -5,7 +5,7 @@ services:
     image: distributed-turn
     networks:
       - PUBLIC_NET
-    command: python3 central_server.py
+    command: tail -f /dev/null
     environment:
       - SERVER_PORT=5000
   
@@ -13,7 +13,7 @@ services:
     image: distributed-turn
     networks:
       - NAT_NET1
-    command: python3 peer.py
+    command: tail -f /dev/null
     depends_on:
       - nat_a
       - central_server
@@ -22,7 +22,7 @@ services:
     image: distributed-turn
     networks:
       - NAT_NET2
-    command: python3 peer.py
+    command: tail -f /dev/null
     depends_on:
       - nat_b
       - central_server
@@ -31,7 +31,7 @@ services:
     image: distributed-turn
     networks:
       - PUBLIC_NET
-    command: python3 peer.py --relay
+    command: tail -f /dev/null
     depends_on:
       - central_server
 
