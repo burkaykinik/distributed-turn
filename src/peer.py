@@ -5,7 +5,7 @@ import time
 import uuid
 
 class Peer:
-    def __init__(self, server_host="15.0.0.3", server_port=5000, is_relay_capable=False):
+    def __init__(self, server_host="15.0.0.3", server_port=50000, is_relay_capable=False):
         self.server_addr = (server_host, server_port)
         self.peer_id = str(uuid.uuid4())[:8]
         self.is_relay_capable = is_relay_capable

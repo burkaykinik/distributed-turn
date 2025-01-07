@@ -2,7 +2,7 @@ import socket
 import json
 
 class CentralServer:
-    def __init__(self, host="0.0.0.0", port=5000):
+    def __init__(self, host="0.0.0.0", port=50000):
         self.host = host
         self.port = port
         self.peers = {}            # {peer_id: (ip, port)}
