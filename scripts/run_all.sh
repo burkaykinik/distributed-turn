@@ -27,10 +27,10 @@ tmux split-window -h
 tmux set -g mouse on
 
 # Connect to containers with correct names
-
 tmux send-keys -t 3 "docker exec -it docker-central_server-1 python3 central_server.py" C-m
 tmux send-keys -t 0 "docker exec -it docker-peer_a-1 python3 peer.py" C-m
 tmux send-keys -t 1 "docker exec -it docker-peer_b-1 python3 peer.py" C-m
 tmux send-keys -t 2 "docker exec -it docker-relay_peer-1 python3 peer.py --relay" C-m
+
 # Attach to tmux session
 tmux attach-session -t p2p_test

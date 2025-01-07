@@ -1,36 +1,45 @@
 version: '3.8'
-
 services:
   central_server:
     image: distributed-turn
     networks:
-      - PUBLIC_NET
+      PUBLIC_NET:
+        ipv4_address: 15.0.0.3
     command: tail -f /dev/null
     environment:
-      - SERVER_PORT=5000
-  
+      - SERVER_PORT=50000
+    ports:
+      - "50000:50000/udp"
+
   peer_a:
     image: distributed-turn
     networks:
-      - NAT_NET1
-    command: tail -f /dev/null
+      NAT_NET1:
+        ipv4_address: 172.168.1.2
+    command: sh -c 'ip route del default && ip route add default via 172.168.1.10 && tail -f /dev/null'
     depends_on:
       - nat_a
       - central_server
-  
+    cap_add:
+      - NET_ADMIN
+
   peer_b:
     image: distributed-turn
     networks:
-      - NAT_NET2
-    command: tail -f /dev/null
+      NAT_NET2:
+        ipv4_address: 172.168.2.2
+    command: sh -c 'ip route del default && ip route add default via 172.168.2.10 && tail -f /dev/null'
     depends_on:
       - nat_b
       - central_server
-  
+    cap_add:
+      - NET_ADMIN
+
   relay_peer:
     image: distributed-turn
     networks:
-      - PUBLIC_NET
+      PUBLIC_NET:
+        ipv4_address: 15.0.0.5
     command: tail -f /dev/null
     depends_on:
       - central_server
@@ -39,21 +48,27 @@ services:
     image: distributed-turn
     privileged: true
     networks:
-      - NAT_NET1
-      - PUBLIC_NET
+      NAT_NET1:
+        ipv4_address: 172.168.1.10
+      PUBLIC_NET:
+        ipv4_address: 15.0.0.10
     cap_add:
       - NET_ADMIN
-    command: ./startup_scripts/nat_startup.sh symmetric
-  
+    command: sh -c './startup_scripts/nat_startup.sh symmetric && tail -f /dev/null'
+
   nat_b:
     image: distributed-turn
     privileged: true
     networks:
-      - NAT_NET2
-      - PUBLIC_NET
+      NAT_NET2:
+        ipv4_address: 172.168.2.10
+      PUBLIC_NET:
+        ipv4_address: 15.0.0.11
     cap_add:
       - NET_ADMIN
-    command: ./startup_scripts/nat_startup.sh symmetric
+    command: sh -c './startup_scripts/nat_startup.sh symmetric && tail -f /dev/null'
+
+
 
 networks:
   PUBLIC_NET:
