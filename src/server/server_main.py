@@ -349,6 +349,9 @@ class Server:
     def _send_to_sock(self, message:dict, sock, addr):
         sock.sendto(json.dumps(message).encode(), addr)
 
+if __name__ == "__main__":
+    server = Server(50000)
+    server.start()
 
 
 

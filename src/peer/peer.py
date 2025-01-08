@@ -4,6 +4,8 @@ import threading
 import time
 import uuid
 
+import sys
+
 class Peer:
     def __init__(self, server_host="15.0.0.3", server_port=50000, is_relay_capable=False):
         self.server_addr = (server_host, server_port)
@@ -32,8 +34,9 @@ class Peer:
 
     def run(self):
         self._register_with_server()
-        self.connect_to_peer("peer_b_id")
-
+        peer_b_id = input()
+        if peer_b_id != "wait":
+            self.connect_to_peer(peer_b_id)
         while True:
             data, addr = self.main_sock.recvfrom(1024)
             message = json.loads(data.decode())
@@ -83,7 +86,7 @@ class Peer:
         })
 
 
-        data, _ = self.main_sock.recvfrom(1024)
+        data, addr = self.main_sock.recvfrom(1024)
         message = json.loads(data.decode())
 
         if message["type"] == "connect_response":
@@ -91,8 +94,8 @@ class Peer:
                 print(f"[PEER {self.peer_id}] Connection failed: {message['message']}")
                 return
         
-        data, addr = self.main_sock.recvfrom(1024)
-        message = json.loads(data.decode())
+        # data, addr = self.main_sock.recvfrom(1024)
+        # message = json.loads(data.decode())
 
         if message["type"] == "starting_connection_process":
             self.temp_sock_addr = (addr[0], message["port"])
@@ -138,6 +141,10 @@ class Peer:
 
         self._set_temp_sock(message, addr)
         new_server_addr = (addr[0], new_port)
+
+        self._send_to_temp_sock({
+            "type": "accept_connection_request",
+        }, new_server_addr)
 
         if message["type"] == "starting_connection_process":
 
@@ -203,8 +210,10 @@ class Peer:
 
         from_peer_id = message["from_peer"]
         to_peer_id = message["to_peer"]
+        
         temp_port_for_server = message["port"]
         temp_server_addr = (addr[0], temp_port_for_server)
+
         self._set_temp_sock(message, temp_server_addr)
 
         socket_for_from_relay = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -220,6 +229,7 @@ class Peer:
         self.relay_mutexes[f"{from_peer_id}-{to_peer_id}"] = threading.Lock()
         
 
+        # Receive one message from each peer to learn addr
         _, addr = socket_for_from_relay.recvfrom(1024)
         self.relay_addr_for_port[port_for_from_relay] = addr
 
@@ -289,3 +299,11 @@ class Peer:
         from_socket.close()
         to_socket.close()
         print(f"[PEER {self.peer_id}] Relay closed")
+
+if __name__ == "__main__":
+    if len(sys.argv) >= 2:
+        is_relay_capable = sys.argv[1] == "--relay"
+    else:
+        is_relay_capable = False
+    peer = Peer(is_relay_capable=is_relay_capable)
+    peer.run()
