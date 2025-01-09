@@ -13,11 +13,18 @@ RUN apt-get update && \
     traceroute \
     vim
 
+# Create directory structure
+RUN mkdir -p /app/src/server /app/src/peer
+
 # Copy application files
-COPY src/ /app/
+COPY src/server/*.py /app/src/server/
+COPY src/peer/*.py /app/src/peer/
 COPY deployment/docker/startup_scripts/ /app/startup_scripts/
 
 # Make startup scripts executable
 RUN chmod +x /app/startup_scripts/*.sh
+
+# Create __init__.py files for Python packages
+RUN touch /app/src/__init__.py /app/src/server/__init__.py /app/src/peer/__init__.py
 
 CMD ["tail", "-f", "/dev/null"]
